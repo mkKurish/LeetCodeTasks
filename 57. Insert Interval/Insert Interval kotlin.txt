@@ -1,0 +1,61 @@
+/*
+Runtime
+267 ms
+Beats
+22.10%
+Memory
+41.8 MB
+Beats
+5.62%
+*/
+class Solution {
+    fun insert(intervals: Array<IntArray>, newInterval: IntArray): Array<IntArray> {
+        if (intervals.isEmpty())
+            return arrayOf(newInterval)
+        val ans = mutableListOf<IntArray>(*intervals)
+        if (ans.size == 1) {
+            if (ans[0][0] > newInterval[0]) {
+                if (ans[0][0] > newInterval[1]) {
+                    ans.add(0, newInterval)
+                } else {
+                    ans[0][0] = newInterval[0]
+                    if (ans[0][1] < newInterval[1])
+                        ans[0][1] = newInterval[1]
+                }
+            } else {
+                if (ans[0][1] >= newInterval[0]) {
+                    if (ans[0][1] < newInterval[1])
+                        ans[0][1] = newInterval[1]
+                } else {
+                    ans.add(1, newInterval)
+                }
+            }
+        } else {
+            var i = 0
+            while (i < ans.size) {
+                if (ans[i][0] < newInterval[0])
+                    i++
+                else
+                    break
+            }
+            ans.add(i, newInterval)
+            if (i != 0){
+                if (ans[i-1][1] >= ans[i][0]){
+                    if (ans[i-1][1] < ans[i][1])
+                        ans[i-1][1] = ans[i][1]
+                    ans.removeAt(i)
+                }
+                i--
+            }
+            while (i+1 < ans.size) {
+                if (ans[i][1] >= ans[i+1][0]) {
+                    if (ans[i][1] < ans[i+1][1])
+                        ans[i][1] = ans[i+1][1]
+                    ans.removeAt(i+1)
+                } else
+                    i++
+            }
+        }
+        return ans.toTypedArray()
+    }
+}
